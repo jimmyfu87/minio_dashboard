@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>MinIO Bucket Summary</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+       
+        <link href="{{ url_for('static', path='css/styles.css') }}" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', path='assets/demo/all-chart-demo.js') }}"></script>
+
+    </head>
+    <body class="sb-nav-fixed" onload="get_chart();">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3">MinIO Dashboard</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+
+     
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Core</div>
+                            <a class="nav-link">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Buckets
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">E.SUN</div>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+
+                        <h1 class="mt-4">MinIO Bucket Summary</h1>
+                        <ol class="breadcrumb mb-4">
+
+                            <li class="breadcrumb-item active">Last Updated at 2022-06-24 11:41:30.555881</li>
+                        </ol>
+                        <div class="row">
+
+                            <!-- Cautious Bucket -->
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-danger shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                Number of Cautious Bucket</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{cautious_num}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa fa-bomb fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <!-- Aware Bucket -->
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                 Number of Aware Bucket</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{aware_num}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa fa-exclamation-circle fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <!-- Healthy Bucket -->
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Number of Healthy Bucket</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{healthy_num}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                               
+                                                <i class="fas fa-smile-beam fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-bar me-1"></i>
+                                        Top Use Ratio Bucket
+                                    </div>
+                                    <div class="card-body"><canvas id="top_use_ratio_bucket_BarChart" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">BarChart</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie me-1"></i>
+                                        Purpose Distribution
+                                    </div>
+                                    <div class="card-body"><canvas id="model_use_distribution_PieChart" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">PieChart</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-bar me-1"></i>
+                                        Top Bucket Number of Management Unit
+                                    </div>
+                                    <div class="card-body"><canvas id="top_management_unit" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">BarChart</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                MinIO Bucket Table
+                            </div>
+                            <div class="card-body">
+                               
+                                    {{ results.to_html(index=False).replace('<table border="1" class="dataframe">', '<table id="datatablesSimple">').replace('<tr style="text-align: right;">', '') | safe}}
+   
+                           
+                            </div>
+                            <div class="card-footer small text-muted">DataTable</div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2022</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', path='js/scripts.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', path='js/datatables-simple-demo.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    </body>
+</html>
